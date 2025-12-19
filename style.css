@@ -1,0 +1,121 @@
+:root {
+    --bg-black: #0a0a0a;
+    --card-bg: #1a1a1a;
+    --text-main: #ffffff;
+    --text-dim: #888888;
+    --recovery-green: #24ff00;
+    --sleep-blue: #00e0ff;
+    --strain-blue: #4d94ff;
+}
+
+body {
+    background-color: #000;
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.app-wrapper {
+    display: flex;
+    gap: 50px;
+    padding: 20px;
+}
+
+.phone {
+    width: 360px;
+    height: 740px;
+    background: var(--bg-black);
+    border: 10px solid #222;
+    border-radius: 45px;
+    padding: 20px;
+    position: relative;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+    overflow: hidden;
+}
+
+.status-bar {
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+header {
+    text-align: center;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-bottom: 30px;
+}
+
+.rings {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
+.ring-item {
+    text-align: center;
+    transition: all 0.3s ease;
+    padding: 10px;
+    border-radius: 15px;
+}
+
+.circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 4px solid #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.circle.recovery { border-color: var(--recovery-green); color: var(--recovery-green); }
+.circle.sleep { border-color: var(--sleep-blue); color: var(--sleep-blue); }
+.circle.strain { border-color: var(--strain-blue); color: var(--strain-blue); }
+
+.ring-item span { font-size: 10px; color: var(--text-dim); }
+
+.card-row {
+    display: flex;
+    gap: 10px;
+}
+
+.card {
+    flex: 1;
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: bold;
+    height: 80px;
+    transition: all 0.3s;
+}
+
+.card small {
+    display: block;
+    color: var(--recovery-green);
+    font-weight: normal;
+    margin-top: 5px;
+}
+
+.info {
+    font-style: normal;
+    color: #555;
+    cursor: help;
+    margin-left: 4px;
+}
+
+/* Hiệu ứng đồng bộ */
+.sync-active {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+    border-color: #fff;
+}
