@@ -1,14 +1,34 @@
 let currentScreen = 'home';
 const langToggle = document.getElementById('lang-toggle');
-const contentDiv = document.getElementById('app-content');
+const contentEn = document.getElementById('content-en');
+const contentVi = document.getElementById('content-vi');
 
-// Hàm render chính
+const leftSide = document.getElementById('container-left');
+const rightSide = document.getElementById('container-right');
+
 function render() {
-    const lang = langToggle.checked ? 'vi' : 'en';
+    // Vẽ màn hình EN
+    contentEn.innerHTML = buildHtml('en');
+    // Vẽ màn hình VI
+    contentVi.innerHTML = buildHtml('vi');
+
+    // Xử lý ẩn hiện trên Mobile dựa vào toggle
+    if (window.innerWidth <= 900) {
+        if (langToggle.checked) {
+            leftSide.classList.add('hide-mobile');
+            rightSide.classList.remove('hide-mobile');
+        } else {
+            leftSide.classList.remove('hide-mobile');
+            rightSide.classList.add('hide-mobile');
+        }
+    }
+}
+
+function buildHtml(lang) {
     const data = WHOOP_CONTENT[currentScreen][lang];
     
     if (currentScreen === 'home') {
-        contentDiv.innerHTML = `
+        return `
             <header>${data.title}</header>
             <div class="rings-row">
                 <div class="ring-box" onclick="navigate('sleep_detail')">
@@ -28,29 +48,31 @@ function render() {
     } else if (currentScreen === 'sleep_detail') {
         let metricsHtml = data.metrics.map(m => `
             <div class="metric-card">
-                <span>${m.label} <i class="info-icon" data-tip="${m.tip}">ⓘ</i></span>
+                <span>${m.label} ${lang === 'vi' ? `<i class="info-icon" data-tip="${m.tip}">ⓘ</i>` : ''}</span>
                 <span>${m.value}</span>
             </div>
         `).join('');
 
-        contentDiv.innerHTML = `
+        return `
             <header>
                 <span class="back-btn" onclick="navigate('home')">←</span>
                 ${data.title}
             </header>
-            <div style="padding-top:20px">${metricsHtml}</div>
+            <div style="padding-top:10px">${metricsHtml}</div>
         `;
     }
 }
 
-// Hàm chuyển trang
 function navigate(screen) {
     currentScreen = screen;
     render();
+    // Tự động cuộn về đầu trang khi chuyển màn hình
+    leftSide.scrollTop = 0;
+    rightSide.scrollTop = 0;
 }
 
-// Lắng nghe nút gạt ngôn ngữ
 langToggle.addEventListener('change', render);
+window.addEventListener('resize', render);
 
-// Chạy lần đầu
+// Khởi chạy
 render();
