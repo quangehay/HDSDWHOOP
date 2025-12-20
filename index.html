@@ -1,32 +1,18 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HDSDWHOOP - Mirror Mode</title>
+    <title>WHOOP Engine 4.0</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="language-header" id="mobile-toggle-area">
-        <span class="label">EN</span>
-        <label class="switch">
-            <input type="checkbox" id="lang-toggle">
-            <span class="slider round"></span>
-        </label>
-        <span class="label">VI</span>
-    </div>
-
+    <div id="lang-btn">🇻🇳</div>
+    
     <div class="main-wrapper">
-        <div class="mobile-container" id="container-left">
-            <div id="content-en"></div>
-        </div>
-
-        <div class="mobile-container" id="container-right">
-            <div id="content-vi"></div>
-        </div>
+        <div class="phone-container" id="container-left"><div id="content-en"></div></div>
+        <div class="phone-container" id="container-right"><div id="content-vi"></div></div>
     </div>
-
     <script src="data.js"></script>
     <script src="script.js"></script>
 </body>
