@@ -89,7 +89,330 @@ function buildPage(lang) {
                         ${comp.battery ? `<span class="battery-text">${comp.battery.val}</span><div class="device-icon">🔋</div>` : ''}
                     </div>
                 </div>`;
+                // --- WEEKLY TREND CHART (Biểu đồ cột 7 ngày) ---
+            case "WEEKLY_TREND_CHART":
+                const maxVal = 21; // Thang đo Strain max là 21
+                return `
+                <div class="trend-box">
+                    <div class="trend-header">
+                        <span>${getText(comp.title, lang)}</span>
+                        <span>❯</span>
+                    </div>
+                    <div class="trend-chart">
+                        ${comp.data.map(d => {
+                            const h = (parseFloat(d.val) / maxVal) * 100;
+                            return `
+                            <div class="trend-col ${d.isToday ? 'active' : ''}">
+                                <div class="trend-val">${d.val}</div>
+                                <div class="trend-bar ${d.val == 0 ? 'empty' : ''}" style="height:${d.val == 0 ? 4 : h}%"></div>
+                                <div class="trend-day">${getText(d.day, lang)}</div>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                </div>`;
+            // --- [CẬP NHẬT] HEALTH PAGE COMPONENTS (Hỗ trợ full tooltip) ---
+            
+            case "WHOOP_AGE_HERO":
+                return `
+                <div class="health-hero-container">
+                    <div class="age-circle">
+                        <div class="age-content">
+                            <div class="age-label">
+                                WHOOP AGE ${getInfo(comp.label_info, lang)}
+                            </div>
+                            <div class="age-val">${comp.val}</div>
+                            <div class="age-sub">
+    ${getText(comp.sub, lang)} ${getInfo(comp.sub_info, lang)}
+</div>
+                        </div>
+                    </div>
+                </div>`;
 
+            case "PACE_OF_AGING":
+                const pct = ((comp.val - (-1.0)) / (3.0 - (-1.0))) * 100;
+                return `
+                <div class="poa-box">
+                    <div class="poa-header">
+                        <div class="poa-title">
+                            ${getText(comp.title, lang)} ${getInfo(comp.title, lang)}
+                        </div>
+                        ${comp.badge ? `
+                            <div class="poa-badge">
+                                ▲ ${getText(comp.badge, lang)} ${getInfo(comp.badge, lang)}
+                            </div>` : ''}
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-size:10px;color:#888;font-weight:700">
+                        <span>Slow</span>
+                        <span style="font-size:18px;color:#fff;font-weight:700">
+                            ${comp.val}x ${getInfo(comp.val_info, lang)}
+                        </span>
+                        <span>Fast 💨</span>
+                    </div>
+                    <div class="poa-scale">
+                        <div class="poa-ticks">
+                            ${Array.from({length: 41}).map((_,i) => `<div class="poa-tick ${i%10===0?'big':''}"></div>`).join('')}
+                        </div>
+                        <div class="poa-marker" style="left: ${pct}%"><div class="poa-marker-line"></div></div>
+                    </div>
+                    <div class="poa-btn" ${getAttr(comp.btn)}>
+    ${getText(comp.btn, lang)} ${getInfo(comp.btn, lang)}
+</div>
+                </div>`;
+
+            case "ADVANCED_LABS":
+                return `
+                <div class="labs-box">
+                    <div class="poa-header">
+                        <div class="poa-title">
+                            ${getText(comp.title, lang)} ${getInfo(comp.title, lang)} ❯
+                        </div>
+                    </div>
+                    <div class="labs-content">
+                        <div class="labs-list">
+                            ${comp.rows.map(r => `
+                                <div class="lab-row">
+                                    <span class="lab-tag" style="background:${r.bg};color:${r.color}">
+                                        ${getText(r.label, lang)}
+                                    </span>
+                                    <span style="display:flex;align-items:center">
+                                        <span class="lab-val">${r.val}</span>
+                                        ${getInfo(r, lang)}
+                                    </span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="lab-chart-wrap">
+                            <div class="lab-donut"></div>
+                            <div class="lab-chart-text">
+                                <span class="lct-big">${comp.total}</span>
+                                <span class="lct-small">BIOMARKERS</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="font-size:9px;color:#666;margin-top:10px">${comp.footer}</div>
+                </div>`;
+
+            case "HEALTH_MONITOR_WIDGET":
+                return `
+                <div class="hm-box" ${getAttr(comp)}>
+                    <div class="hm-header">
+                        <div>${getText(comp.title, lang)} ${getInfo(comp.title, lang)}</div>
+                        <span>❯</span>
+                    </div>
+                    <div class="hm-grid">
+                        ${comp.items.map(i => `
+                            <div class="hm-item">
+                                <div class="hm-icon">${i.icon}</div>
+                                <div class="hm-label">
+                                    ${getText(i.name, lang)} 
+                                </div>
+                                <div class="hm-check">✓</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="hm-footer">
+                        <div style="width:14px;height:14px;background:#24ff00;border-radius:2px;display:flex;align-items:center;justify-content:center;color:#000">✓</div>
+                        ${getText(comp.footer, lang)} ${getInfo(comp.footer, lang)}
+                    </div>
+                </div>`;
+                // --- [MỚI] HEALTHSPAN DETAIL COMPONENTS ---
+
+            case "HEALTHSPAN_HERO":
+                // Tính vị trí marker cho thanh Pace of Aging nhỏ (1.1x)
+                const poaPct = ((comp.poa_val - (-1.0)) / (3.0 - (-1.0))) * 100;
+                return `
+                <div class="hs-hero-container">
+                    <div class="organic-blob">
+                        <div class="hs-label">WHOOP AGE ${getInfo(comp.info, lang)}</div>
+                        <div class="hs-val">${comp.val}</div>
+                        <div class="hs-sub">${comp.sub}</div>
+                    </div>
+                    <div class="mini-poa">
+                        <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#888;margin-bottom:5px">
+                            <span>Pace of Aging</span>
+                            <span style="color:#fff">${comp.poa_val}x</span>
+                        </div>
+                        <div class="mini-poa-scale">
+                            ${Array.from({length: 41}).map(() => `<div class="mini-tick"></div>`).join('')}
+                            <div class="mini-marker" style="left: ${poaPct}%"></div>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;font-size:9px;color:#555">
+                            <span>Slow</span><span>Fast</span>
+                        </div>
+                    </div>
+                </div>`;
+
+            case "HS_INSIGHT_CARD":
+                return `
+                <div class="hs-card">
+                    <div class="hs-card-title">${getText(comp.title, lang)}</div>
+                    <div class="hs-card-text">${getText(comp.text, lang)}</div>
+                    <div class="hs-link">${getText(comp.link, lang)} <span>➔</span></div>
+                </div>`;
+
+            case "FACTOR_LIST":
+                return `
+                <div class="factor-group">
+                    <div class="factor-header">
+                        <span>${getText(comp.category, lang)}</span>
+                        <div style="font-size:9px;color:#888">▼ 6 Month avg. ▲ 30 Day avg.</div>
+                    </div>
+                    ${comp.items.map(item => `
+                        <div class="factor-item">
+                            <div class="fi-top">
+                                <div class="fi-title">${getText(item.title, lang)}</div>
+                                <div class="fi-impact ${item.impact_val.includes('+') ? 'pos' : 'neg'}">
+                                    ${item.impact_val} <span style="font-size:9px;font-weight:500">years</span>
+                                </div>
+                            </div>
+                            <div class="fi-bar-container">
+                                <div class="fi-bar-bg"></div>
+                                <div class="fi-marker" style="left: ${item.pct}%"></div>
+                                <div style="position:absolute; top:20px; left:${item.pct}%; transform:translateX(-50%); font-size:10px; font-weight:800; color:#fff">
+                                    ${item.val}
+                                </div>
+                            </div>
+                            <div class="fi-labels">
+                                <span>${item.range_start}</span>
+                                <div style="text-align:center">
+                                    <span style="display:block;color:#aaa;font-size:8px">30 Day avg.</span>
+                                </div>
+                                <span>${item.range_end}</span>
+                            </div>
+                            ${item.desc ? `<div style="margin-top:10px;font-size:10px;color:#888;line-height:1.4">${getText(item.desc, lang)}</div>` : ''}
+                        </div>
+                    `).join('')}
+                </div>`;
+
+            case "TREND_CHART_SIMPLE":
+                return `
+                <div class="trend-graph-box">
+                    <div class="tg-header">
+                        <div>${getText(comp.title, lang)}</div>
+                        <span>❯</span>
+                    </div>
+                    <div class="tg-lines">
+                        ${comp.hasRefLine ? `<div class="tg-line-ref"></div>` : ''}
+                        <div class="tg-line-draw" style="bottom:${comp.lineHeight || '40px'}; transform: rotate(${comp.lineRotate || '-1deg'})"></div>
+                        ${comp.currentVal ? `
+                            <div style="position:absolute; right:0; top:${comp.valTop || '30px'}; text-align:right">
+                                <span style="font-size:14px;font-weight:700;color:#ffaa00">${comp.currentVal}</span>
+                                <div style="width:6px;height:6px;border-radius:50%;background:#ffaa00;display:inline-block;border:2px solid #15171a"></div>
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="tg-dates">
+                        <span>Nov 16</span><span>Nov 23</span><span>Nov 30</span><span>Dec 7</span><span>Dec 14</span>
+                    </div>
+                </div>`;
+            // --- HEALTH MONITOR DETAIL COMPONENTS ---
+
+            // 1. Biểu đồ nhịp tim trực tiếp (Mô phỏng)
+            case "HR_LIVE_CHART":
+                return `
+                <div class="hm-chart-box">
+                    <div class="hm-chart-header">
+                        ${comp.icon} ${getText(comp.title, lang)} ${getInfo(comp.title_info, lang)}
+                    </div>
+                    <div class="hm-chart-val-row">
+                        <div class="hm-chart-val">${comp.val}</div>
+                        <div class="hm-chart-unit">BPM</div>
+                    </div>
+                    <div class="hm-chart-sub">${getText(comp.sub, lang)}</div>
+                    <div class="hm-visual-graph">
+                        <div class="hm-graph-line"></div>
+                        <div class="hm-graph-dot"></div>
+                    </div>
+                </div>`;
+
+            // 2. Lưới 5 thẻ chỉ số (Resp, SPO2, RHR, HRV, Temp)
+            case "HEALTH_GRID":
+                return `
+                <div class="hm-grid-layout">
+                    ${comp.items.map(item => `
+                        <div class="hm-detail-card" ${getAttr(item)}>
+                            <div class="hm-card-head">
+                                <span class="hm-card-icon">${item.icon}</span> 
+                                ${getText(item.title, lang)} 
+                                ${getInfo(item, lang)}
+                            </div>
+                            <div class="hm-card-val">
+                                ${item.val} <span class="hm-card-unit">${item.unit}</span>
+                            </div>
+                            <div class="hm-card-pill" style="background:${item.status_bg}; color:${item.status_color}">
+                                ✓ ${getText(item.status_text, lang)}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>`;
+
+            // 3. Nút chia sẻ báo cáo ở dưới cùng
+            case "REPORT_ACTION":
+                return `
+                <div class="report-btn-container">
+                    <div class="report-btn">
+                        <span style="font-size:16px">📤</span> 
+                        ${getText(comp.btn_text, lang)} ${getInfo(comp.btn_text, lang)}
+                    </div>
+                    <div class="report-desc">${getText(comp.desc, lang)}</div>
+                </div>`;
+
+            case "SIMPLE_CARD":
+                return `
+                <div class="simple-card" ${getAttr(comp)}>
+                    <div class="sc-header">
+                        <div class="sc-title">
+                            ${getText(comp.title, lang)} ${getInfo(comp.title, lang)} ${comp.arrow ? '❯' : ''}
+                        </div>
+                        ${comp.badge ? `<div class="sc-badge">${comp.badge}</div>` : ''}
+                    </div>
+                    ${comp.layout === 'row' ? `
+                        <div class="heart-row">
+                            <div>
+                                <div style="font-size:11px;color:#aaa;margin-bottom:4px;display:flex;align-items:center">
+                                    ${getText(comp.sub_label, lang)} ${getInfo(comp.sub_label, lang)}
+                                </div>
+                                <div style="font-size:14px;font-weight:700;color:#fff">${getText(comp.val, lang)}</div>
+                                <div style="font-size:10px;color:#24ff00;margin-top:4px">✓ ${comp.date}</div>
+                            </div>
+                            <div class="heart-icon-big">♥</div>
+                        </div>
+                    ` : `
+                        ${comp.sub_label ? `
+                            <div style="font-size:9px;color:#888;font-weight:700;margin-bottom:5px;text-transform:uppercase;display:flex;align-items:center">
+                                ${getText(comp.sub_label, lang)} ${getInfo(comp.sub_label, lang)}
+                            </div>
+                        ` : ''}
+                        
+                        <div class="sc-main">${comp.val} ${comp.unit || ''}</div>
+                        ${comp.sub ? `<div class="sc-sub">${comp.sub}</div>` : ''}
+                        
+                        ${comp.visual_bars ? `
+                            <div class="sc-visual-bars">
+                                ${Array.from({length: 6}).map((_,i) => `<div class="sc-bar ${i<3?'active':''}"></div>`).join('')}
+                            </div>
+                        ` : ''}
+                        ${comp.visual_graph ? `
+                             <div style="height:40px;margin-top:10px;border-bottom:1px solid #333;display:flex;align-items:flex-end;gap:2px">
+                                ${Array.from({length: 40}).map(() => `<div style="width:100%;background:#0091ff;opacity:0.6;height:${Math.random()*100}%"></div>`).join('')}
+                             </div>
+                        ` : ''}
+                    `}
+                </div>`;
+
+            // --- STRAIN ACTIVITY ROW (Dòng hoạt động trong ngày) ---
+            case "STRAIN_ACTIVITY_ROW":
+                return `
+                <div style="margin: 0 15px 5px; font-size: 12px; font-weight: 700; color:#fff;">${getText(comp.title, lang)}</div>
+                <div class="strain-act-row" ${getAttr(comp)}>
+                    <div class="sa-badge">
+                        <span>🏃</span> ${comp.val}
+                    </div>
+                    <div class="sa-info">${getText(comp.name, lang)}</div>
+                    <div class="sa-time">
+                        ${comp.time_start}<br>${comp.time_end}
+                    </div>
+                </div>`;
             case "METRIC_LIST_DETAILED":
                 return `
                 <div class="rec-metric-container">
@@ -115,6 +438,8 @@ function buildPage(lang) {
                         </div>
                     ` : ''}
                 </div>`;
+
+            
             // --- EXPLAIN BLOCK (CẬP NHẬT THÊM VISUAL RECOVERY) ---
             case "EXPLAIN_BLOCK":
                 let visualHTML = '';
@@ -158,6 +483,99 @@ function buildPage(lang) {
                         <div class="imp-item"><div class="imp-icon">👂</div><div class="imp-badge" style="background:#24ff00">▲</div></div>
                     </div>`;
                 }
+                else if (comp.visual === 'strain_scale') {
+                    visualHTML = `
+                    <div class="scale-container">
+                        <div class="scale-icons"><span>🧘</span><span>🚶</span><span>🏃</span><span>⚡</span></div>
+                        <div class="scale-bar"></div>
+                        <div class="scale-markers"><span>0</span><span>10</span><span>14</span><span>18</span><span>21</span></div>
+                    </div>`;
+                }
+                else if (comp.visual === 'strain_load') {
+                    visualHTML = `
+                    <div class="load-visual">
+                        <div class="load-icons-row"><span>🏃</span><span>🏋️</span></div>
+                        <div class="load-bar-bg"><div class="load-fill" style="left: 30%; width: 40%"></div></div>
+                        <div class="load-labels"><span>Cardio</span><span>Muscular</span></div>
+                    </div>`;
+                }
+                else if (comp.visual === 'strain_target') {
+                    visualHTML = `
+                    <div class="target-graph">
+                        <div class="target-zone"></div>
+                        <div class="target-bars">
+                            <div class="t-bar" style="height: 40%"></div>
+                            <div class="t-bar" style="height: 60%"></div>
+                            <div class="t-bar" style="height: 80%"></div>
+                        </div>
+                    </div>`;
+                }
+                // [MỚI] Video Thumbnail (Woman)
+                else if (comp.visual === 'wa_video') {
+                    visualHTML = `
+                    <div class="video-thumb" style="background-image: url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=600&auto=format&fit=crop')">
+                        <div class="video-blob-overlay"></div>
+                        <div class="video-play-btn">▶</div>
+                    </div>`;
+                }
+                
+                // [MỚI] Whoop Age Trend Graph
+                else if (comp.visual === 'wa_trend_graph') {
+                    visualHTML = `
+                    <div class="wa-trend-box">
+                        <div class="wa-legend">
+                            <div class="wa-legend-item"><div class="wa-dot" style="background:linear-gradient(135deg, #d69e2e, #24ff00)"></div> Your Whoop Age</div>
+                            <div class="wa-legend-item"><div class="wa-dot" style="background:#fff"></div> Chronological Age</div>
+                        </div>
+                        <div class="wa-graph-area">
+                            <div class="line-chrono"></div>
+                            <div class="line-whoop"></div>
+                            <div style="position:absolute; right:0; top:20px; font-size:10px; color:#fff; font-weight:700">34.6</div>
+                            <div style="position:absolute; right:0; top:50px; font-size:10px; color:#24ff00; font-weight:700">29.9</div>
+                        </div>
+                    </div>`;
+                }
+
+                // [MỚI] Pace of Aging Meter (Explain version)
+                else if (comp.visual === 'poa_meter_explain') {
+                    visualHTML = `
+                    <div class="poa-box" style="margin:20px 0">
+                        <div style="display:flex;justify-content:space-between;font-size:10px;color:#888;font-weight:700">
+                            <span>Slow</span><span style="font-size:18px;color:#fff;font-weight:700">0.8x</span><span>Fast</span>
+                        </div>
+                        <div class="poa-scale">
+                            <div class="poa-ticks">${Array.from({length: 41}).map((_,i) => `<div class="poa-tick ${i%10===0?'big':''}"></div>`).join('')}</div>
+                            <div class="poa-marker" style="left: 45%"><div class="poa-marker-line"></div></div>
+                        </div>
+                    </div>`;
+                }
+
+                // [MỚI] Impact Chart (Sleep Consistency Example)
+                else if (comp.visual === 'impact_chart') {
+                    visualHTML = `
+                    <div class="impact-visual-box">
+                        <div class="iv-header"><span>SLEEP CONSISTENCY</span><span>▼ 6 Month avg.</span></div>
+                        <div class="iv-bar-wrap">
+                            <div class="iv-bar"></div>
+                            <div class="iv-marker">
+                                <div class="iv-triangle"></div>
+                                <div class="iv-val">+1.3</div>
+                                <div style="font-size:8px;color:#aaa">years</div>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+
+                // [MỚI] Calibration Blob
+                else if (comp.visual === 'calibration_blob') {
+                    visualHTML = `
+                    <div class="calib-blob-container">
+                        <div class="calib-blob">
+                            <div class="calib-val">31.0</div>
+                            <div class="calib-sub">WHOOP AGE</div>
+                        </div>
+                    </div>`;
+                }
 
                 return `
                 <div class="explain-box">
@@ -171,6 +589,19 @@ function buildPage(lang) {
                         </div>
                     `).join('') : ''}
                 </div>`;
+                return `
+                <div class="explain-box">
+                    ${comp.title ? `<div class="explain-title">${getText(comp.title, lang)}</div>` : ''}
+                    ${visualHTML}
+                    ${comp.text ? `<div class="explain-text">${getText(comp.text, lang)}</div>` : ''}
+                    ${comp.items ? comp.items.map(item => `
+                        <div class="def-item">
+                            <div class="def-title" style="color:${item.color || '#fff'}">${getText(item.title, lang)}</div>
+                            <div class="def-desc">${getText(item.desc, lang)}</div>
+                        </div>
+                    `).join('') : ''}
+                </div>`;
+                
             
             // --- HOME PAGE COMPONENTS ---
             case "RINGS":
@@ -339,7 +770,7 @@ function buildPage(lang) {
                 </div>`;
 
             // --- SLEEP NEED COMPONENTS ---
-            case "SLEEP_NEED_CHART":
+            case "SLEEP_NEED_CHART": {
                 const sleepWidth = "74%"; 
                 return `
                 <div class="need-chart-box">
@@ -364,7 +795,7 @@ function buildPage(lang) {
                             </div>
                         `).join('')}
                     </div>
-                </div>`;
+                </div>`;}
 
             default: return '';
         }
