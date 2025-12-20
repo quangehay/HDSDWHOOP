@@ -1,89 +1,124 @@
-/* --- CÁC PHẦN TRƯỚC GIỮ NGUYÊN --- */
+/* --- 1. GLOBAL & RESET --- */
 :root {
     --bg: #121417; --card: #1e2123; --yellow: #ffcc00; --text: #fff; --dim: #888;
     --nav-bg: rgba(30, 33, 35, 0.95);
+    --font-stack: 'Inter', sans-serif;
 }
-body { background: #000; color: var(--text); font-family: 'Inter', sans-serif; margin: 0; display: flex; justify-content: center; }
-.main-wrapper { display: flex; gap: 40px; padding: 20px; }
+* { box-sizing: border-box; }
+body { background: #000; color: var(--text); font-family: var(--font-stack); margin: 0; display: flex; justify-content: center; }
 
-/* PHONE CONTAINER */
-.phone-container { 
-    width: 375px; 
-    height: 812px; 
-    background: var(--bg); 
-    border: 12px solid #222; 
-    border-radius: 50px; 
-    overflow-y: auto; 
-    scrollbar-width: none; 
-    position: relative; 
-    padding-bottom: 0; 
-    display: flex;
-    flex-direction: column;
-}
+/* --- 2. MAIN LAYOUT (Phone Container) --- */
+.main-wrapper { display: flex; gap: 40px; padding: 20px; }
+.phone-container { width: 375px; height: 812px; background: var(--bg); border: 12px solid #222; border-radius: 50px; overflow-y: auto; scrollbar-width: none; position: relative; padding-bottom: 0; display: flex; flex-direction: column; }
 .phone-container::-webkit-scrollbar { display: none; }
 .content-scroll-wrapper { flex: 1; padding-bottom: 20px; }
 
-/* --- FOOTER DESIGN (PINNED) --- */
-.footer-wrapper {
-    position: sticky; bottom: 30px; left: 0; width: 100%; padding: 0 20px;
-    box-sizing: border-box; display: flex; align-items: flex-end; gap: 15px;
-    z-index: 1000; pointer-events: none; margin-top: auto;
+/* Responsive Mobile */
+@media (max-width: 900px) { 
+    .main-wrapper { gap: 0; padding: 0; } 
+    .phone-container { width: 100vw; height: 100vh; border: none; border-radius: 0; } 
+    #lang-btn { display: flex; } 
 }
-.nav-pill {
-    flex: 1; background: var(--nav-bg); backdrop-filter: blur(10px);
-    height: 70px; border-radius: 35px; display: flex; justify-content: space-between;
-    align-items: center; padding: 0 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    pointer-events: auto;
-}
+
+/* --- 3. HEADER NAV --- */
+.header-nav { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; width: 100%; }
+.nav-left { flex: 1; display: flex; align-items: center; gap: 8px; }
+.nav-right { flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+.nav-center { flex: 1.5; display: flex; align-items: center; justify-content: center; gap: 15px; color: #666; font-size: 12px; font-weight: bold; }
+
+.profile-circle { width: 34px; height: 34px; background: #ffaa66; border-radius: 50%; color: #000; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+.streak-badge { background: #2a2e31; color: #eee; padding: 6px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 4px; }
+.date-pill { background: #2a2e31; color: #fff; padding: 6px 18px; border-radius: 20px; font-size: 11px; font-weight: 800; letter-spacing: 1px; }
+.device-icon { transform: rotate(90deg); font-size: 18px; }
+.back-btn { font-size: 24px; color: #fff; cursor: pointer; padding: 5px; font-weight: bold; }
+
+/* --- 4. FOOTER TASKBAR --- */
+.footer-wrapper { position: sticky; bottom: 30px; left: 0; width: 100%; padding: 0 20px; display: flex; align-items: flex-end; gap: 15px; z-index: 1000; pointer-events: none; margin-top: auto; }
+.nav-pill { flex: 1; background: var(--nav-bg); backdrop-filter: blur(10px); height: 70px; border-radius: 35px; display: flex; justify-content: space-between; align-items: center; padding: 0 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); pointer-events: auto; }
 .task-item { display: flex; flex-direction: column; align-items: center; color: #666; cursor: pointer; transition: color 0.2s; }
 .task-item.active { color: #fff; }
 .task-icon { font-size: 20px; margin-bottom: 4px; }
 .task-label { font-size: 9px; font-weight: 700; letter-spacing: 0.3px; }
 
+/* AI Button */
 .ai-btn-container { width: 70px; height: 70px; pointer-events: auto; flex-shrink: 0; }
-.ai-btn {
-    width: 100%; height: 100%; border-radius: 50%;
-    background: linear-gradient(135deg, #1e2123, #000);
-    border: 1px solid rgba(100, 100, 255, 0.2);
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 900; color: #fff; font-size: 18px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.6), inset 0 0 10px rgba(80, 80, 255, 0.2);
-    position: relative; cursor: pointer;
-}
-.ai-btn::before {
-    content: ''; position: absolute; inset: -1px; border-radius: 50%; padding: 1px;
-    background: linear-gradient(45deg, #4455ff, #a044ff);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0.8;
+.ai-btn { width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(135deg, #1e2123, #000); border: 1px solid rgba(100, 100, 255, 0.2); display: flex; align-items: center; justify-content: center; font-weight: 900; color: #fff; font-size: 18px; box-shadow: 0 5px 20px rgba(0,0,0,0.6), inset 0 0 10px rgba(80, 80, 255, 0.2); position: relative; cursor: pointer; }
+.ai-btn::before { content: ''; position: absolute; inset: -1px; border-radius: 50%; padding: 1px; background: linear-gradient(45deg, #4455ff, #a044ff); mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: exclude; opacity: 0.8; }
+
+/* --- 5. COMMON COMPONENTS --- */
+/* Info Tooltip (?) */
+.info-btn { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; margin-left: 6px; background: var(--yellow); color: #000; border-radius: 50%; font-size: 10px; font-weight: 900; cursor: help; }
+.info-btn:hover::after { content: attr(data-tip); position: absolute; background: #333; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 11px; width: 180px; margin-top: -60px; z-index: 999; pointer-events: none; }
+
+/* Language Switcher (Rainbow Style) */
+#lang-btn {
+    position: fixed; 
+    bottom: 120px; 
+    left: 20px; 
+    width: 80px; 
+    height: 80px;
+    
+    /* Màu sắc cầu vồng Apple */
+    background: linear-gradient(135deg, rgba(64, 201, 255, 0.3), rgba(175, 82, 222, 0.3), rgba(255, 45, 85, 0.3));
+    backdrop-filter: blur(2px); 
+    -webkit-backdrop-filter: blur(2px);
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    box-shadow: 0 8px 32px 0 rgba(175, 82, 222, 0.2);
+    
+    color: #fff; 
+    border-radius: 22px; 
+    font-weight: 900; 
+    
+    /* [SỬA LỖI TẠI ĐÂY] Đổi từ 'none' sang 'flex' để nút luôn hiện */
+    display: flex; 
+    
+    align-items: center; 
+    justify-content: center;
+    cursor: pointer; 
+    z-index: 2000; 
+    font-size: 35px; 
+    transition: transform 0.2s, filter 0.2s;
 }
 
-/* --- COMPONENTS STYLES --- */
-.header-nav { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; width: 100%; box-sizing: border-box; }
-.nav-left { flex: 1; display: flex; align-items: center; gap: 8px; }
-.nav-right { flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
-.nav-center { flex: 1.5; display: flex; align-items: center; justify-content: center; gap: 15px; color: #666; font-size: 12px; font-weight: bold; }
-.profile-circle { width: 34px; height: 34px; background: #ffaa66; border-radius: 50%; color: #000; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 12px; }
-.streak-badge { background: #2a2e31; color: #eee; padding: 6px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 4px; }
-.date-pill { background: #2a2e31; color: #fff; padding: 6px 18px; border-radius: 20px; font-size: 11px; font-weight: 800; letter-spacing: 1px; }
-.device-icon { transform: rotate(90deg); font-size: 18px; }
+#lang-btn:active { 
+    transform: scale(0.92); 
+    filter: brightness(1.1); 
+}
 
-.rings-row { display: flex; justify-content: space-around; padding: 10px 10px; margin-bottom: 5px; }
+@media (hover: hover) { 
+    #lang-btn:hover { 
+        box-shadow: 0 12px 40px 0 rgba(175, 82, 222, 0.5); 
+        transform: translateY(-2px); 
+    } 
+}
+/* --- 6. HOME PAGE COMPONENTS --- */
+/* Rings */
+.rings-row { display: flex; justify-content: space-around; padding: 10px; margin-bottom: 5px; }
 .ring-box { text-align: center; flex: 1; }
 .circle { width: 80px; height: 80px; border-radius: 50%; border: 5px solid #333; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-weight: bold; font-size: 22px; }
-.circle.sleep { border-color: #7ba1ba; }
-.circle.recovery { border-color: #ffcc00; }
-.circle.strain { border-color: #0091ff; }
+.circle.sleep { border-color: #7ba1ba; } .circle.recovery { border-color: #25FF00; } .circle.strain { border-color: #0091ff; }
 .ring-box span { font-size: 10px; font-weight: bold; color: var(--dim); text-transform: uppercase; }
 
+/* Dual Monitor Cards */
 .dual-row { display: flex; gap: 10px; padding: 0 15px; margin-bottom: 15px; }
 .card-half { flex: 1; background: var(--card); padding: 15px; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between; min-height: 70px; }
 .card-header { font-size: 10px; font-weight: bold; color: #999; text-transform: uppercase; display: flex; justify-content: space-between; margin-bottom: 5px; }
 .status-val { font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 6px; }
 
-.title-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; position: relative; }
-.section-label { font-size: 18px; font-weight: bold; padding: 10px 20px; }
-.title-row .section-label { padding: 0; }
+/* Lists & Panels */
+.title-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; }
+.section-label { 
+    font-size: 18px; 
+    font-weight: bold; 
+    /* Thêm padding để chữ không bị dính vào mép trái */
+    padding: 10px 20px; 
+}
+
+/* Khi label nằm trong Title Row (như mục 'Ngày của tôi') thì bỏ padding đi 
+   vì Title Row đã có padding rồi, tránh bị thụt vào sâu quá */
+.title-row .section-label { 
+    padding: 0; 
+}
 .action-btn { width: 32px; height: 32px; background: #fff; color: #000; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; cursor: pointer; }
 .action-menu { position: absolute; bottom: 50px; right: 20px; background: #222a30; width: 230px; border-radius: 12px; display: none; padding: 8px 0; box-shadow: 0 10px 40px rgba(0,0,0,0.8); z-index: 100; }
 .action-menu.show { display: block; animation: popIn 0.15s ease-out; }
@@ -105,43 +140,193 @@ body { background: #000; color: var(--text); font-family: 'Inter', sans-serif; m
 .metric-item .label { font-size: 13px; font-weight: 600; color: #fff; }
 .metric-item .val { font-size: 16px; font-weight: bold; }
 
-.info-btn { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; margin-left: 6px; background: var(--yellow); color: #000; border-radius: 50%; font-size: 10px; font-weight: 900; cursor: help; }
-.info-btn:hover::after { content: attr(data-tip); position: absolute; background: #333; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 11px; width: 180px; margin-top: -60px; z-index: 999; pointer-events: none; }
+/* --- 7. SLEEP PAGE (V2) COMPONENTS --- */
+/* Hero Ring V2 */
+.hero-v2-box { text-align: center; padding: 30px 0 10px; position: relative; margin-bottom: 20px; }
+.hero-v2-val { font-size: 68px; font-weight: 800; line-height: 1; letter-spacing: -2px; }
+.hero-v2-unit { font-size: 30px; vertical-align: super; font-weight: 600; margin-left: 2px; }
+.hero-v2-label { font-size: 10px; font-weight: 800; letter-spacing: 2px; color: #8899a6; text-transform: uppercase; margin-top: 5px; }
+.hero-dots { display: flex; justify-content: center; gap: 4px; margin-top: 10px; opacity: 0.3; }
+.hero-dot { width: 20px; height: 3px; background: #fff; border-radius: 2px; }
+.hero-dot.active { opacity: 1; background: #fff; }
 
-/* --- NEW LANGUAGE BUTTON (TRANSPARENT & CLEAR) --- */
-#lang-btn { 
-    position: fixed; 
-    bottom: 120px; /* Cao hơn footer để không bị che */
-    left: 20px; 
-    width: 80px; 
-    height: 80px; 
-    
-    /* Transparent Glass Effect */
-    background: rgba(40, 44, 48, 0.6); 
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    
-    color: #fff; 
-    border-radius: 16px; /* Bo góc vuông nhẹ thay vì tròn hẳn cho hiện đại */
-    font-weight: 900; 
-    display: none; 
-    align-items: center; 
-    justify-content: center; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
-    cursor: pointer; 
-    z-index: 2000; 
-    font-size: 35px; /* Icon cờ to rõ */
-    transition: transform 0.2s, background 0.2s;
+/* Metrics Card V2 */
+.metrics-card-v2 { background: #15171a; border-radius: 16px; padding: 20px; margin: 0 15px 15px; border: 1px solid rgba(255,255,255,0.05); }
+.mc-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.mc-row:last-child { border-bottom: none; }
+.mc-label { display: flex; align-items: center; gap: 10px; font-size: 11px; font-weight: 700; color: #eee; text-transform: uppercase; letter-spacing: 0.5px; }
+.mc-icon { font-size: 14px; color: #8899a6; }
+.mc-visual { display: flex; align-items: center; gap: 10px; }
+.segment-bar { display: flex; gap: 3px; }
+.seg { width: 18px; height: 4px; background: #2a2e31; border-radius: 2px; }
+.seg.fill-opt { background: #24ff00; } 
+.seg.fill-suff { background: #8899a6; } 
+.seg.fill-poor { background: #ffaa00; }
+.mc-val { font-size: 16px; font-weight: 700; width: 40px; text-align: right; }
+.mc-legend { display: flex; gap: 15px; margin-top: 15px; background: #000; padding: 10px; border-radius: 8px; }
+.leg-item { display: flex; align-items: center; gap: 6px; font-size: 10px; color: #aaa; font-weight: 600; }
+.leg-dot { width: 12px; height: 3px; border-radius: 2px; }
+
+/* Insight Box */
+.insight-box { background: linear-gradient(135deg, rgba(30, 40, 50, 0.8), rgba(20, 20, 25, 0.9)); border: 1px solid #3d4d66; border-left: 4px solid #5E8096; border-radius: 12px; margin: 0 15px 20px; padding: 15px; }
+.insight-text { font-size: 12px; line-height: 1.5; color: #ddd; margin-bottom: 10px; }
+.insight-link { font-size: 10px; font-weight: 800; color: #6e9eff; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+
+/* Graph V2 */
+.graph-v2-container { margin: 0 15px 20px; padding-bottom: 20px; }
+.gv2-header { margin-bottom: 15px; }
+.gv2-title { font-size: 11px; font-weight: 800; color: #ccc; text-transform: uppercase; letter-spacing: 0.5px; }
+.gv2-val-row { display: flex; align-items: baseline; gap: 5px; margin-top: 5px;}
+.gv2-big { font-size: 28px; font-weight: 700; }
+.gv2-arrow { color: #24ff00; font-size: 14px; }
+.gv2-sub { font-size: 12px; color: #777; margin-top: 2px; }
+.fake-wave-chart { height: 120px; width: 100%; margin: 15px 0; position: relative; border-bottom: 1px solid #333; border-top: 1px dashed #333; background: linear-gradient(180deg, transparent 50%, rgba(94, 128, 150, 0.1) 100%), repeating-linear-gradient(90deg, transparent 0, transparent 2px, #222 2px, #222 4px); }
+.wave-path { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; background: #5E8096; clip-path: polygon(0% 100%, 0% 60%, 5% 70%, 10% 40%, 15% 65%, 20% 50%, 25% 80%, 30% 60%, 35% 75%, 40% 50%, 45% 70%, 50% 40%, 55% 60%, 60% 55%, 65% 80%, 70% 50%, 75% 65%, 80% 45%, 85% 70%, 90% 30%, 95% 60%, 100% 20%, 100% 100%); opacity: 0.7; }
+.stage-row { margin-bottom: 12px; }
+.stage-top { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; margin-bottom: 6px; }
+.stage-bar-bg { height: 20px; width: 100%; background: #1e2123; border-radius: 4px; position: relative; overflow: hidden; }
+.striped-bg { background-image: repeating-linear-gradient(45deg, #222 0, #222 4px, #1a1a1a 4px, #1a1a1a 8px); }
+.stage-fill { height: 100%; border-radius: 4px; }
+.col-awake { background: #cbd5e0; } .col-light { background: #8199ba; } .col-deep { background: #ff88d9; } .col-rem { background: #9f7aea; }
+
+/* --- 8. SLEEP NEED COMPONENTS --- */
+.need-chart-box { background: #15171a; border-radius: 16px; padding: 25px 20px; margin: 0 15px; border: 1px solid rgba(255,255,255,0.05); }
+.nc-header { margin-bottom: 25px; }
+.nc-title { font-size: 11px; font-weight: 800; color: #ccc; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+.nc-big-val { font-size: 32px; font-weight: 700; display: flex; align-items: baseline; gap: 8px; }
+.nc-arrow { color: #24ff00; font-size: 16px; }
+.nc-sub-val { font-size: 14px; color: #777; font-weight: 500; }
+.nc-bar-group { margin-bottom: 30px; }
+.nc-bar-label-row { display: flex; justify-content: space-between; font-size: 10px; font-weight: 800; color: #8899a6; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+.nc-value-text { color: #fff; font-size: 14px; }
+.nc-sleep-bar-bg { width: 100%; height: 16px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; margin-bottom: 20px; position: relative;}
+.nc-sleep-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, rgba(100,150,200,0.2), #6e9eff); }
+.nc-need-bar-bg { width: 100%; height: 16px; display: flex; border-radius: 4px; overflow: hidden; gap: 2px; }
+.nc-need-seg { height: 100%; }
+.nc-breakdown { background: #000; padding: 15px; border-radius: 12px; }
+.nc-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 13px; font-weight: 500; color: #ddd; }
+.nc-item:last-child { margin-bottom: 0; }
+.nc-item-left { display: flex; align-items: center; gap: 10px; }
+.nc-dot { width: 12px; height: 12px; border-radius: 3px; }
+.nc-item-val { font-weight: 700; font-family: monospace; font-size: 14px; }
+/* --- RESTORATIVE SLEEP ROW (Thêm vào cuối file) --- */
+.restorative-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 20px; padding-top: 15px; 
+    border-top: 1px solid rgba(255,255,255,0.1); /* Đường gạch ngang mờ bên trên */
+}
+.res-left { 
+    display: flex; align-items: center; gap: 10px; 
+    font-size: 11px; font-weight: 800; color: #ccc; 
+    letter-spacing: 0.5px; text-transform: uppercase; 
+}
+.res-icon { 
+    width: 14px; height: 14px; border-radius: 3px; 
+    /* Gradient hồng tím giống icon trong ảnh */
+    background: linear-gradient(135deg, #ed64a6, #9f7aea); 
+}
+.res-right { text-align: right; }
+.res-main-val { font-size: 18px; font-weight: 700; color: #fff; }
+.res-arrow { font-size: 12px; margin-left: 4px; vertical-align: middle; }
+.res-sub-val { font-size: 11px; color: #888; font-weight: 500; display: block; margin-top: 2px; }
+/* --- EXPLANATION PAGE STYLES (Trang giải thích) --- */
+
+/* Nút (i) trên Header */
+.info-icon-header {
+    width: 28px; height: 28px;
+    border: 2px solid #8899a6; border-radius: 50%;
+    color: #8899a6; font-size: 14px; font-weight: 700; font-family: serif;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
 }
 
-#lang-btn:active {
-    transform: scale(0.95);
-    background: rgba(60, 64, 68, 0.8);
+/* Các khối văn bản giải thích */
+.explain-box { margin: 0 20px 30px; }
+.explain-title { font-size: 20px; font-weight: 700; margin-bottom: 15px; color: #fff; line-height: 1.3; }
+.explain-text { font-size: 13px; line-height: 1.6; color: #ccc; margin-bottom: 15px; }
+
+/* Danh sách định nghĩa (Hours vs Needed...) */
+.def-item { margin-bottom: 20px; }
+.def-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 5px; }
+.def-desc { font-size: 12px; line-height: 1.5; color: #aaa; margin-bottom: 5px; }
+.def-ranges { font-size: 11px; color: #888; font-family: monospace; }
+
+/* VISUAL: Mô phỏng thanh Sleep Need (Màu xanh sọc) */
+.visual-bar-container { margin: 20px 0; background: #15171a; padding: 20px; border-radius: 12px; text-align: center; }
+.visual-bar-img { 
+    height: 30px; width: 100%; border-radius: 4px; margin: 10px 0; 
+    position: relative; overflow: hidden;
+}
+/* Tạo hiệu ứng sọc chéo màu xanh ngọc (Sleep Need) */
+.pattern-green {
+    background: repeating-linear-gradient(
+        45deg, #2A9D8F, #2A9D8F 10px, #264653 10px, #264653 20px
+    );
+}
+/* Tạo hiệu ứng dải màu tím (Sleep Stages) */
+.pattern-stages {
+    background: linear-gradient(90deg, #2a2e31 10%, #8199ba 30%, #ff88d9 60%, #9f7aea 90%);
 }
 
-@media (max-width: 900px) { 
-    .main-wrapper { gap: 0; padding: 0; }
-    .phone-container { width: 100vw; height: 100vh; border: none; border-radius: 0; }
-    #lang-btn { display: flex; } 
+.visual-icons-row { display: flex; justify-content: space-between; color: #888; font-size: 20px; margin-bottom: 5px;}
+
+/* --- RECOVERY PAGE STYLES --- */
+
+/* 1. Recovery Metric List (Danh sách chỉ số HRV, RHR...) */
+.rec-metric-container {
+    background: #15171a; border-radius: 16px; padding: 0 20px; margin: 0 15px 15px;
+    border: 1px solid rgba(255,255,255,0.05);
 }
+.rec-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.rec-row:last-child { border-bottom: none; }
+.rec-left { display: flex; align-items: center; gap: 12px; font-size: 11px; font-weight: 800; color: #eee; letter-spacing: 0.5px; text-transform: uppercase; }
+.rec-icon { color: #8899a6; font-size: 14px; }
+.rec-right { text-align: right; }
+.rec-main-val { font-size: 18px; font-weight: 700; color: #fff; display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
+.rec-arrow { font-size: 10px; }
+.rec-sub-val { font-size: 10px; color: #777; font-weight: 600; margin-top: 2px; }
+
+/* 2. Visual: Recovery Gauge (Đồng hồ đo 3 màu trong trang giải thích) */
+.gauge-container {
+    width: 200px; height: 100px; margin: 20px auto; position: relative; overflow: hidden;
+}
+.gauge-arc {
+    width: 200px; height: 200px; border-radius: 50%;
+    border: 10px solid transparent;
+    border-top-color: #ff3b30; /* Red */
+    border-right-color: #ffcc00; /* Yellow */
+    border-left-color: #ffcc00; 
+    /* Cách này mô phỏng đơn giản, để đẹp hẳn cần SVG hoặc Conic Gradient phức tạp */
+    background: conic-gradient(from 180deg, #ff3b30 0deg 60deg, #ffcc00 60deg 120deg, #24ff00 120deg 180deg, transparent 180deg);
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+    mask: radial-gradient(farthest-side, transparent 85%, #fff 86%);
+    -webkit-mask: radial-gradient(farthest-side, transparent 85%, #fff 86%);
+    transform: rotate(0deg);
+}
+.gauge-label {
+    position: absolute; bottom: 0; width: 100%; text-align: center;
+    font-size: 24px; font-weight: 800; color: #fff;
+}
+
+/* 3. Visual: Icons Grid (Lưới icon cải thiện phục hồi) */
+.improve-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;
+    margin: 20px 0; padding: 10px;
+}
+.imp-item {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: #1e2123; border-radius: 8px; padding: 15px 5px;
+    border: 1px solid rgba(255,255,255,0.05); position: relative;
+}
+.imp-icon { font-size: 24px; color: #8899a6; margin-bottom: 5px; }
+.imp-badge {
+    position: absolute; bottom: 5px; right: 5px;
+    width: 14px; height: 14px; border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8px; color: #000; font-weight: bold;
+}
+/* Visual Calculation (4 icons) */
+.calc-row { display: flex; justify-content: center; gap: 20px; margin: 20px 0; font-size: 28px; color: #ccc; }
